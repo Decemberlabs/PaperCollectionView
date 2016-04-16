@@ -17,6 +17,8 @@
 @optional
 - (void)paperViewDidMinimize:(PaperView *)view;
 - (void)paperViewDidMaximize:(PaperView *)view;
+- (void)paperViewDidScrollMaximized:(PaperView *)view toIndexPath:(NSIndexPath*)indexPath;
+
 
 - (void)paperViewWillMinimize:(PaperView *)view;
 - (void)paperViewWillMaximize:(PaperView *)view;

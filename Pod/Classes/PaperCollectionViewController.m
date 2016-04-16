@@ -69,7 +69,7 @@ static NSString * const reuseIdentifier = @"PaperCell";
     
     [super viewDidLoad];
     
-    _maximizedSpacing = 8;
+    _maximizedSpacing = 2;
     
     self.collectionView.clipsToBounds = NO;
     self.automaticallyAdjustsScrollViewInsets = NO;
@@ -449,16 +449,35 @@ static NSString * const reuseIdentifier = @"PaperCell";
 
 #pragma mark - UIScrollViewDelegate
 
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    
-    if (_paperPagingEnabled) {
-        [self.collectionView pop_removeAllAnimations];
+
+-(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
+    if (self.maximized) {
+        if ([_delegate respondsToSelector:@selector(paperViewDidScrollMaximized:toIndexPath:)]) {
+            NSIndexPath * indexPath = [self.collectionView indexPathForCell:self.collectionView.visibleCells[0]];
+            
+            [_delegate paperViewDidScrollMaximized:(PaperView *)self.collectionView.superview.superview toIndexPath:indexPath];
+        }
     }
 }
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if (self.maximized) {
+        if ([_delegate respondsToSelector:@selector(paperViewDidScrollMaximized:toIndexPath:)]) {
+            NSIndexPath * indexPath = self.pagingIndexPath;
+
+            
+            [_delegate paperViewDidScrollMaximized:(PaperView *)self.collectionView.superview.superview toIndexPath:indexPath];
+        }
+    }
+}
+
+
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
     
     if (_paperPagingEnabled) {
+        
         
         CGFloat currentOffset = self.collectionView.contentOffset.x;
         
@@ -557,7 +576,7 @@ static NSString * const reuseIdentifier = @"PaperCell";
     }
     
     if ([_delegate respondsToSelector:@selector(paperViewWillMaximize:)]) {
-        [_delegate paperViewWillMaximize:(PaperView *)self.collectionView.superview];
+        [_delegate paperViewWillMaximize:(PaperView *)self.collectionView.superview.superview];
     }
     
     _shouldFollowEndOffsetPath = YES;
@@ -573,11 +592,12 @@ static NSString * const reuseIdentifier = @"PaperCell";
 }
 
 - (void)minimizeCellAtIndexPath:(NSIndexPath *)indexPath {
-    
+    _panBeganIndexPath = indexPath;
     [self minimizeCellAtIndexPath:indexPath velocity:0];
 }
 
 - (void)minimizeCellAtIndexPath:(NSIndexPath *)indexPath velocity:(CGFloat)velocity {
+    
     
     [[self.view findFirstResponder] resignFirstResponder];
     [self pop_removeAllAnimations];
@@ -606,11 +626,12 @@ static NSString * const reuseIdentifier = @"PaperCell";
     _endOffset = CGPointMake(offsetX, self.maximizedHeight - _minimizedHeight);
     
     if ([_delegate respondsToSelector:@selector(paperViewWillMinimize:)]) {
-        [_delegate paperViewWillMinimize:(PaperView *)self.collectionView.superview];
+        [_delegate paperViewWillMinimize:(PaperView *)self.collectionView.superview.superview];
     }
-    
+
     [self animateFromHeight:_height toScaledHeight:_minimizedHeight velocity:0 completion:^(BOOL finished) {
         _shouldFollowEndOffsetPath = NO;
+        
     }];
 }
 
@@ -647,12 +668,12 @@ static NSString * const reuseIdentifier = @"PaperCell";
         if (finished) {
             if (scaledHeight == _minimizedHeight) {
                 if ([_delegate respondsToSelector:@selector(paperViewDidMinimize:)]) {
-                    [_delegate paperViewDidMinimize:(PaperView *)self.collectionView.superview];
+                    [_delegate paperViewDidMinimize:(PaperView *)self.collectionView.superview.superview];
                 }
             }
             else {
                 if ([_delegate respondsToSelector:@selector(paperViewDidMaximize:)]) {
-                    [_delegate paperViewDidMaximize:(PaperView *)self.collectionView.superview];
+                    [_delegate paperViewDidMaximize:(PaperView *)self.collectionView.superview.superview];
                 }
             }
             if (completion) {
