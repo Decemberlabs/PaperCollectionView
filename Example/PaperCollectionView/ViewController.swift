@@ -33,6 +33,10 @@ class ViewController: UIViewController, UICollectionViewDataSource, PaperViewDel
         blackView.alpha = percent
     }
     
+    func paperViewDidScroll(view: PaperView, percentMaximized percent: CGFloat, toIndexPath indexPath: NSIndexPath) {
+//        print("percent \(percent) indexPath \(indexPath.row)")
+    }
+    
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 1
     }

@@ -230,13 +230,8 @@ static NSString * const reuseIdentifier = @"PaperCell";
     self.collectionView.contentOffset = [self adjustedContentOffset];
     
     if ([self.delegate respondsToSelector:@selector(paperViewHeightDidChange:percentMaximized:)]) {
-        CGFloat percent = (height - self.minimizedHeight) / (self.maximizedHeight - self.minimizedHeight);
-        if (percent > 1) {
-            percent = 1;
-        } else if (percent < 0) {
-            percent = 0;
-        }
-        [self.delegate paperViewHeightDidChange:_height percentMaximized:percent];
+        
+        [self.delegate paperViewHeightDidChange:_height percentMaximized:[self percentMaximized]];
     }
 }
 
@@ -258,6 +253,16 @@ static NSString * const reuseIdentifier = @"PaperCell";
 - (CGFloat)maxOffsetForScale:(CGFloat)scale {
     
     return floor([self offsetAtIndex:self.collectionView.lastIndexPath.item forScale: scale] - (self.viewWidth - self.viewWidth * scale) + [self marginForScale:scale]);
+}
+
+-(CGFloat)percentMaximized {
+    CGFloat percent = (_height - self.minimizedHeight) / (self.maximizedHeight - self.minimizedHeight);
+    if (percent > 1) {
+        percent = 1;
+    } else if (percent < 0) {
+        percent = 0;
+    }
+    return percent;
 }
 
 #pragma mark - Pan Gesture
@@ -451,24 +456,19 @@ static NSString * const reuseIdentifier = @"PaperCell";
 
 
 -(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
-    if (self.maximized) {
-        if ([_delegate respondsToSelector:@selector(paperViewDidScrollMaximized:toIndexPath:)]) {
-            NSIndexPath * indexPath = [self.collectionView indexPathForCell:self.collectionView.visibleCells[0]];
-            
-            [_delegate paperViewDidScrollMaximized:(PaperView *)self.collectionView.superview.superview toIndexPath:indexPath];
-        }
+    if ([_delegate respondsToSelector:@selector(paperViewDidScroll:percentMaximized:toIndexPath:)]) {
+        NSIndexPath * indexPath = [self.collectionView indexPathForCell:self.collectionView.visibleCells[0]];
+        
+        [_delegate paperViewDidScroll:(PaperView *)self.collectionView.superview.superview percentMaximized:[self percentMaximized] toIndexPath:indexPath];
     }
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (self.maximized) {
-        if ([_delegate respondsToSelector:@selector(paperViewDidScrollMaximized:toIndexPath:)]) {
-            NSIndexPath * indexPath = self.pagingIndexPath;
-
-            
-            [_delegate paperViewDidScrollMaximized:(PaperView *)self.collectionView.superview.superview toIndexPath:indexPath];
-        }
+    if ([_delegate respondsToSelector:@selector(paperViewDidScroll:percentMaximized:toIndexPath:)]) {
+        NSIndexPath * indexPath = self.pagingIndexPath;
+        
+        [_delegate paperViewDidScroll:(PaperView *)self.collectionView.superview.superview percentMaximized:[self percentMaximized] toIndexPath:indexPath];
     }
 }
 
