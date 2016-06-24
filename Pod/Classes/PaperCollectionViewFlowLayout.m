@@ -10,6 +10,15 @@
 
 @implementation PaperCollectionViewFlowLayout
 
+- (instancetype)init
+{
+    if (self = [super init]) {
+        self.itemsAppearDirection = PaperItemsAppearDirectionFromLeft;
+        self.itemsDisappearDirection = PaperItemsDisappearDirectionToLeft;
+    }
+    return self;
+}
+
 - (CGPoint)contentOffsetAfterItems:(NSInteger)itemsCount
 {
     CGPoint contentOffset   = CGPointZero;
@@ -27,7 +36,7 @@
     
     CGFloat offset = [self contentOffsetAfterItems:3].x;
     
-    attributes.transform = CGAffineTransformMakeTranslation(offset, 0.f);
+    attributes.transform = CGAffineTransformMakeTranslation(self.itemsAppearDirection == PaperItemsAppearDirectionFromLeft ? -offset : offset, 0.f);
     attributes.zIndex   = 50;
     attributes.alpha    = 1.0f;
 
@@ -40,7 +49,7 @@
     
     CGFloat offset = [self contentOffsetAfterItems:3].x;
     
-    attributes.transform = CGAffineTransformMakeTranslation(-offset, 0.f);
+    attributes.transform = CGAffineTransformMakeTranslation(self.itemsDisappearDirection == PaperItemsDisappearDirectionToRight? offset : -offset, 0.f);
     attributes.zIndex = 100;
     attributes.alpha = 1.0f;
     
