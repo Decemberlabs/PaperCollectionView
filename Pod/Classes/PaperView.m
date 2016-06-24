@@ -8,6 +8,7 @@
 
 #import "PaperView.h"
 #import "UIView+PaperUtils.h"
+#import "PaperCollectionViewFlowLayout.h"
 
 @interface PaperView ()
 
@@ -35,7 +36,7 @@
 
 - (void)setupView {
     self.clipsToBounds = NO;
-    self.collectionViewController = [[PaperCollectionViewController alloc] initWithCollectionViewLayout:[[UICollectionViewFlowLayout alloc] init]];
+    self.collectionViewController = [[PaperCollectionViewController alloc] initWithCollectionViewLayout:[[PaperCollectionViewFlowLayout alloc] init]];
     [self addSubview:self.collectionViewController.view];
 }
 

@@ -12,8 +12,7 @@
 #import <pop/POP.h>
 #import "PaperView.h"
 #import "UICollectionView+PaperUtils.h"
-
-
+#import "PaperCollectionViewFlowLayout.h"
 
 @interface PaperCollectionViewController ()
 
@@ -79,6 +78,16 @@ static NSString * const reuseIdentifier = @"PaperCell";
     ((UICollectionViewFlowLayout *)self.collectionViewLayout).scrollDirection = UICollectionViewScrollDirectionHorizontal;
     
     [self addPanGesture];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    PaperCollectionViewFlowLayout *layout = ((PaperCollectionViewFlowLayout *)self.collectionViewLayout);
+    
+    layout.itemSize = self.currentCellSize;
+    layout.minimumInteritemSpacing = self.spacing;
 }
 
 - (void)didReceiveMemoryWarning {
