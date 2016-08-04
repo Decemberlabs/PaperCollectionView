@@ -640,11 +640,16 @@ static NSString * const reuseIdentifier = @"PaperCell";
 
     [self animateFromHeight:_height toScaledHeight:_minimizedHeight velocity:0 completion:^(BOOL finished) {
         _shouldFollowEndOffsetPath = NO;
-        
+        [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:YES];
     }];
 }
 
 - (void)animateFromHeight:(CGFloat)height toScaledHeight:(CGFloat)scaledHeight velocity:(CGFloat)velocity completion:(void (^)(BOOL finished)) completion {
+    
+    if (height == scaledHeight) {
+        completion(YES);
+        return;
+    }
     
     _animating = YES;
     self.collectionView.scrollEnabled = NO;
