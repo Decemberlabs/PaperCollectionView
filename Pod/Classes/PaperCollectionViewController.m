@@ -467,7 +467,8 @@ static NSString * const reuseIdentifier = @"PaperCell";
 -(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
     if ([_delegate respondsToSelector:@selector(paperViewDidScroll:percentMaximized:toIndexPath:)]) {
         NSIndexPath * indexPath = [self.collectionView indexPathForCell:self.collectionView.visibleCells[0]];
-        
+        if (!indexPath) { return; }
+
         [_delegate paperViewDidScroll:(PaperView *)self.collectionView.superview.superview percentMaximized:[self percentMaximized] toIndexPath:indexPath];
     }
 }
@@ -476,7 +477,8 @@ static NSString * const reuseIdentifier = @"PaperCell";
 {
     if ([_delegate respondsToSelector:@selector(paperViewDidScroll:percentMaximized:toIndexPath:)]) {
         NSIndexPath * indexPath = self.pagingIndexPath;
-        
+        if (!indexPath) { return; }
+
         [_delegate paperViewDidScroll:(PaperView *)self.collectionView.superview.superview percentMaximized:[self percentMaximized] toIndexPath:indexPath];
     }
 }
